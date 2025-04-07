@@ -1,0 +1,15 @@
+services:
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    ports:
+      - 8001:8080
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: app
+    ports:
+      - 5432:5432
