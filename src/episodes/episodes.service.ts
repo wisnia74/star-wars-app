@@ -12,25 +12,27 @@ export class EpisodesService {
     private episodesRepository: Repository<Episode>,
   ) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  create(createEpisodeDto: CreateEpisodeDto) {
-    return 'This action adds a new episode';
+  create(dto: CreateEpisodeDto) {
+    const episode = this.episodesRepository.create(dto);
+
+    return this.episodesRepository.save(episode);
   }
 
   findAll() {
-    return `This action returns all episodes`;
+    return this.episodesRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} episode`;
+  findOne(id: string) {
+    return this.episodesRepository.findOne({ where: { id } });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(id: number, updateEpisodeDto: UpdateEpisodeDto) {
-    return `This action updates a #${id} episode`;
+  async update(id: string, dto: UpdateEpisodeDto) {
+    const episode = await this.episodesRepository.findOne({ where: { id } });
+
+    return this.episodesRepository.save({ episode, ...dto });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} episode`;
+  remove(id: string) {
+    return this.episodesRepository.delete(id);
   }
 }

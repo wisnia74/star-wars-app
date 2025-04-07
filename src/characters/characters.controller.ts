@@ -16,8 +16,8 @@ export class CharactersController {
   constructor(private readonly charactersService: CharactersService) {}
 
   @Post()
-  create(@Body() createCharacterDto: CreateCharacterDto) {
-    return this.charactersService.create(createCharacterDto);
+  create(@Body() dto: CreateCharacterDto) {
+    return this.charactersService.create(dto);
   }
 
   @Get()
@@ -27,19 +27,16 @@ export class CharactersController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.charactersService.findOne(+id);
+    return this.charactersService.findOne(id);
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateCharacterDto: UpdateCharacterDto,
-  ) {
-    return this.charactersService.update(+id, updateCharacterDto);
+  update(@Param('id') id: string, @Body() dto: UpdateCharacterDto) {
+    return this.charactersService.update(id, dto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.charactersService.remove(+id);
+    return this.charactersService.remove(id);
   }
 }

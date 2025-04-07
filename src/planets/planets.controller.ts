@@ -16,8 +16,8 @@ export class PlanetsController {
   constructor(private readonly planetsService: PlanetsService) {}
 
   @Post()
-  create(@Body() createPlanetDto: CreatePlanetDto) {
-    return this.planetsService.create(createPlanetDto);
+  create(@Body() dto: CreatePlanetDto) {
+    return this.planetsService.create(dto);
   }
 
   @Get()
@@ -27,16 +27,16 @@ export class PlanetsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.planetsService.findOne(+id);
+    return this.planetsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePlanetDto: UpdatePlanetDto) {
-    return this.planetsService.update(+id, updatePlanetDto);
+  update(@Param('id') id: string, @Body() dto: UpdatePlanetDto) {
+    return this.planetsService.update(id, dto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.planetsService.remove(+id);
+    return this.planetsService.remove(id);
   }
 }

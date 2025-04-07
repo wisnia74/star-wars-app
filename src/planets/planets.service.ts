@@ -12,25 +12,27 @@ export class PlanetsService {
     private planetsRepository: Repository<Planet>,
   ) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  create(createPlanetDto: CreatePlanetDto) {
-    return 'This action adds a new planet';
+  create(dto: CreatePlanetDto) {
+    const planet = this.planetsRepository.create(dto);
+
+    return this.planetsRepository.save(planet);
   }
 
   findAll() {
-    return `This action returns all planets`;
+    return this.planetsRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} planet`;
+  findOne(id: string) {
+    return this.planetsRepository.findOne({ where: { id } });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(id: number, updatePlanetDto: UpdatePlanetDto) {
-    return `This action updates a #${id} planet`;
+  async update(id: string, dto: UpdatePlanetDto) {
+    const planet = await this.planetsRepository.findOne({ where: { id } });
+
+    return this.planetsRepository.save({ ...planet, ...dto });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} planet`;
+  remove(id: string) {
+    return this.planetsRepository.delete(id);
   }
 }

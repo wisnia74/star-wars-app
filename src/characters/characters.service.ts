@@ -12,25 +12,29 @@ export class CharactersService {
     private charactersRepository: Repository<Character>,
   ) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  create(createCharacterDto: CreateCharacterDto) {
-    return 'This action adds a new character';
+  create(dto: CreateCharacterDto) {
+    const character = this.charactersRepository.create(dto);
+
+    return this.charactersRepository.save(character);
   }
 
   findAll() {
-    return `This action returns all characters`;
+    return this.charactersRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} character`;
+  findOne(id: string) {
+    return this.charactersRepository.findOne({ where: { id } });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(id: number, updateCharacterDto: UpdateCharacterDto) {
-    return `This action updates a #${id} character`;
+  async update(id: string, dto: UpdateCharacterDto) {
+    const character = await this.charactersRepository.findOne({
+      where: { id },
+    });
+
+    return this.charactersRepository.save({ ...character, ...dto });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} character`;
+  remove(id: string) {
+    return this.charactersRepository.delete(id);
   }
 }
