@@ -18,7 +18,9 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@/*": ["./src/*"]
+      "@characters/*": ["./src/characters/*"],
+      "@episodes/*": ["./src/episodes/*"],
+      "@planets/*": ["./src/planets/*"]
     }
   }
 }

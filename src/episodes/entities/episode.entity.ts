@@ -8,7 +8,7 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { Character } from '@/characters/entities/character.entity';
+import { Character } from '@characters/entities/character.entity';
 
 export enum STAR_WARS_EPISODE {
   THE_PHANTOM_MENACE = 'The Phantom Menace',
@@ -31,7 +31,9 @@ export class Episode extends BaseEntity {
   @Column({ type: 'enum', enum: STAR_WARS_EPISODE })
   name: STAR_WARS_EPISODE;
 
-  @ManyToMany(() => Character, (character) => character.episodes)
+  @ManyToMany(() => Character, (character) => character.episodes, {
+    onDelete: 'CASCADE',
+  })
   characters: Character[];
 
   @CreateDateColumn()

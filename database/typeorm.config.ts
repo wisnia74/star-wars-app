@@ -1,5 +1,6 @@
 import { DataSource } from 'typeorm';
 
+// This is a config file to be exclusively used for migrations
 const AppDataSource = new DataSource({
   type: 'postgres',
   host: 'localhost',
@@ -7,10 +8,8 @@ const AppDataSource = new DataSource({
   username: 'user',
   password: 'password',
   database: 'app',
-  synchronize: false,
   entities: ['**/*.entity.ts'],
   migrations: ['database/migrations/*-migration.ts'],
-  migrationsRun: false,
   logging: true,
 });
 

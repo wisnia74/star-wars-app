@@ -10,8 +10,8 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { Episode } from '@/episodes/entities/episode.entity';
-import { Planet } from '@/planets/entities/planet.entity';
+import { Episode } from '@episodes/entities/episode.entity';
+import { Planet } from '@planets/entities/planet.entity';
 
 @Entity('characters')
 @Unique(['name'])
@@ -28,12 +28,14 @@ export class Character extends BaseEntity {
   name: string;
 
   @ManyToMany(() => Episode, (episode) => episode.characters, {
-    cascade: true,
+    onDelete: 'CASCADE',
   })
   @JoinTable()
   episodes: Episode[];
 
-  @ManyToOne(() => Planet, (planet) => planet.characters)
+  @ManyToOne(() => Planet, (planet) => planet.characters, {
+    onDelete: 'SET NULL',
+  })
   planet: Planet | null;
 
   @CreateDateColumn()

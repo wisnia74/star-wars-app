@@ -8,7 +8,7 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { Character } from '@/characters/entities/character.entity';
+import { Character } from '@characters/entities/character.entity';
 
 @Entity('planets')
 @Unique(['name'])
@@ -19,7 +19,9 @@ export class Planet extends BaseEntity {
   @Column({ type: 'varchar', length: 25 })
   name: string;
 
-  @OneToMany(() => Character, (character) => character.planet)
+  @OneToMany(() => Character, (character) => character.planet, {
+    onDelete: 'CASCADE',
+  })
   characters: Character[];
 
   @CreateDateColumn()

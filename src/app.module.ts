@@ -14,7 +14,6 @@ import { PlanetsModule } from './planets/planets.module';
       password: 'password',
       database: 'app',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
       logging: true,
     }),
     CharactersModule,

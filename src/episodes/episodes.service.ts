@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { Episode } from './entities/episode.entity';
-import { Character } from '@/characters/entities/character.entity';
+import { Character } from '@characters/entities/character.entity';
 
 @Injectable()
 export class EpisodesService {
