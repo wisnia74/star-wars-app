@@ -8,7 +8,7 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { Character } from '../../characters/entities/character.entity';
+import { Character } from '@/characters/entities/character.entity';
 
 export enum STAR_WARS_EPISODE {
   THE_PHANTOM_MENACE = 'The Phantom Menace',

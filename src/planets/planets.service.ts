@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreatePlanetDto } from './dto/create-planet.dto';
 import { UpdatePlanetDto } from './dto/update-planet.dto';
 import { Planet } from './entities/planet.entity';
-import { Character } from 'src/characters/entities/character.entity';
+import { Character } from '@/characters/entities/character.entity';
 
 @Injectable()
 export class PlanetsService {

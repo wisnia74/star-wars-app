@@ -10,8 +10,8 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { Episode } from '../../episodes/entities/episode.entity';
-import { Planet } from '../../planets/entities/planet.entity';
+import { Episode } from '@/episodes/entities/episode.entity';
+import { Planet } from '@/planets/entities/planet.entity';
 
 @Entity('characters')
 @Unique(['name'])

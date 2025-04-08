@@ -8,7 +8,7 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { Character } from '../../characters/entities/character.entity';
+import { Character } from '@/characters/entities/character.entity';
 
 @Entity('planets')
 @Unique(['name'])

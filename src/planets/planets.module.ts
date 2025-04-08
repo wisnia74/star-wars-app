@@ -3,7 +3,7 @@ import { PlanetsService } from './planets.service';
 import { PlanetsController } from './planets.controller';
 import { Planet } from './entities/planet.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Character } from 'src/characters/entities/character.entity';
+import { Character } from '@/characters/entities/character.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Character, Planet])],
