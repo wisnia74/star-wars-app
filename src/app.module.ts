@@ -1,21 +1,14 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from './config.module';
+import { TypeOrmModule } from './typeorm.module';
 import { CharactersModule } from './characters/characters.module';
 import { EpisodesModule } from './episodes/episodes.module';
 import { PlanetsModule } from './planets/planets.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'user',
-      password: 'password',
-      database: 'app',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      logging: true,
-    }),
+    ConfigModule,
+    TypeOrmModule,
     CharactersModule,
     EpisodesModule,
     PlanetsModule,
