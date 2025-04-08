@@ -6,12 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { EpisodesService } from './episodes.service';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 
 @Controller('episodes')
+@UseInterceptors(ClassSerializerInterceptor)
 export class EpisodesController {
   constructor(private readonly episodesService: EpisodesService) {}
 

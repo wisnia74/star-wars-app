@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migration1744144593881 implements MigrationInterface {
-    name = 'Migration1744144593881'
+export class Migration1744153275938 implements MigrationInterface {
+    name = 'Migration1744153275938'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "public"."episodes_name_enum" AS ENUM('The Phantom Menace', 'Attack of the Clones', 'Revenge of the Sith', 'A New Hope', 'The Empire Strikes Back', 'Return of the Jedi', 'The Force Awakens', 'The Last Jedi', 'The Rise of Skywalker')`);

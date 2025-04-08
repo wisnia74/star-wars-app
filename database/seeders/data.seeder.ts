@@ -54,7 +54,6 @@ export default class DataSeeder extends Seeder {
     characters['Luke Skywalker'].planet = planets['Tatooine'];
     characters['Leia Organa'].planet = planets['Tatooine'];
     characters['Han Solo'].planet = planets['Alderaan'];
-    characters['Darth Vader'].planet = planets['Hoth'];
 
     characters['Luke Skywalker'].episodes = [
       episodes[STAR_WARS_EPISODE.THE_PHANTOM_MENACE],

@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { Episode } from '@episodes/entities/episode.entity';
 import { Planet } from '@planets/entities/planet.entity';
+import { Exclude, Transform } from 'class-transformer';
 
 @Entity('characters')
 @Unique(['name'])
@@ -31,16 +32,25 @@ export class Character extends BaseEntity {
     onDelete: 'CASCADE',
   })
   @JoinTable()
+  @Transform(({ value }: { value: Episode[] }) => value.map((x) => x.name), {
+    toPlainOnly: true,
+  })
   episodes: Episode[];
 
   @ManyToOne(() => Planet, (planet) => planet.characters, {
     onDelete: 'SET NULL',
   })
+  @Transform(
+    ({ value }: { value: Planet | null }) => (value && value.name) ?? undefined,
+    { toPlainOnly: true },
+  )
   planet: Planet | null;
 
   @CreateDateColumn()
+  @Exclude()
   createdAt: Date;
 
   @UpdateDateColumn()
+  @Exclude()
   updatedAt: Date;
 }

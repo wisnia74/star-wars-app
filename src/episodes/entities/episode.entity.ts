@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Character } from '@characters/entities/character.entity';
+import { Exclude, Transform } from 'class-transformer';
 
 export enum STAR_WARS_EPISODE {
   THE_PHANTOM_MENACE = 'The Phantom Menace',
@@ -34,11 +35,16 @@ export class Episode extends BaseEntity {
   @ManyToMany(() => Character, (character) => character.episodes, {
     onDelete: 'CASCADE',
   })
+  @Transform(({ value }: { value: Character[] }) => value.map((x) => x.name), {
+    toPlainOnly: true,
+  })
   characters: Character[];
 
   @CreateDateColumn()
+  @Exclude()
   createdAt: Date;
 
   @UpdateDateColumn()
+  @Exclude()
   updatedAt: Date;
 }

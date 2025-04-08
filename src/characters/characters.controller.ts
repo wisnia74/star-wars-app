@@ -6,12 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 
 @Controller('characters')
+@UseInterceptors(ClassSerializerInterceptor)
 export class CharactersController {
   constructor(private readonly charactersService: CharactersService) {}
 

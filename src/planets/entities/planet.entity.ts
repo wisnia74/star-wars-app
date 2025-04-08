@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Character } from '@characters/entities/character.entity';
+import { Exclude, Transform } from 'class-transformer';
 
 @Entity('planets')
 @Unique(['name'])
@@ -22,11 +23,16 @@ export class Planet extends BaseEntity {
   @OneToMany(() => Character, (character) => character.planet, {
     onDelete: 'CASCADE',
   })
+  @Transform(({ value }: { value: Character[] }) => value.map((x) => x.name), {
+    toPlainOnly: true,
+  })
   characters: Character[];
 
   @CreateDateColumn()
+  @Exclude()
   createdAt: Date;
 
   @UpdateDateColumn()
+  @Exclude()
   updatedAt: Date;
 }
