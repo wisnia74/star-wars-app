@@ -1,38 +1,55 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Episode } from './entities/episode.entity';
+import { Character } from 'src/characters/entities/character.entity';
 
 @Injectable()
 export class EpisodesService {
-  constructor(
-    @InjectRepository(Episode)
-    private episodesRepository: Repository<Episode>,
-  ) {}
+  async create(dto: CreateEpisodeDto) {
+    const episode = Episode.create(dto);
 
-  create(dto: CreateEpisodeDto) {
-    const episode = this.episodesRepository.create(dto);
+    if (dto.characterIds && dto.characterIds.length) {
+      episode.characters = (
+        await Promise.all(
+          dto.characterIds.map((id) => Character.findOne({ where: { id } })),
+        )
+      ).filter((x) => x !== null);
+    }
 
-    return this.episodesRepository.save(episode);
+    return episode.save();
   }
 
   findAll() {
-    return this.episodesRepository.find();
+    return Episode.find({ relations: { characters: true } });
   }
 
   findOne(id: string) {
-    return this.episodesRepository.findOne({ where: { id } });
+    return Episode.findOne({ where: { id }, relations: { characters: true } });
   }
 
   async update(id: string, dto: UpdateEpisodeDto) {
-    const episode = await this.episodesRepository.findOne({ where: { id } });
+    const episode = await Episode.findOne({
+      where: { id },
+      relations: { characters: true },
+    });
 
-    return this.episodesRepository.save({ episode, ...dto });
+    if (dto.name) {
+      episode!.name = dto.name;
+    }
+
+    if (dto.characterIds && dto.characterIds.length) {
+      episode!.characters = (
+        await Promise.all(
+          dto.characterIds.map((id) => Character.findOne({ where: { id } })),
+        )
+      ).filter((x) => x !== null);
+    }
+
+    return episode!.save();
   }
 
   remove(id: string) {
-    return this.episodesRepository.delete(id);
+    return Episode.delete(id);
   }
 }

@@ -1,40 +1,71 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Character } from './entities/character.entity';
+import { Planet } from 'src/planets/entities/planet.entity';
+import { Episode } from 'src/episodes/entities/episode.entity';
 
 @Injectable()
 export class CharactersService {
-  constructor(
-    @InjectRepository(Character)
-    private charactersRepository: Repository<Character>,
-  ) {}
+  async create(dto: CreateCharacterDto) {
+    const character = Character.create(dto);
 
-  create(dto: CreateCharacterDto) {
-    const character = this.charactersRepository.create(dto);
+    if (dto.planetId) {
+      character.planet = await Planet.findOne({
+        where: { id: dto.planetId },
+      });
+    }
 
-    return this.charactersRepository.save(character);
+    if (dto.episodeIds && dto.episodeIds.length) {
+      character.episodes = (
+        await Promise.all(
+          dto.episodeIds.map((id) => Episode.findOne({ where: { id } })),
+        )
+      ).filter((x) => x !== null);
+    }
+
+    return character.save();
   }
 
   findAll() {
-    return this.charactersRepository.find();
+    return Character.find({ relations: { episodes: true, planet: true } });
   }
 
   findOne(id: string) {
-    return this.charactersRepository.findOne({ where: { id } });
+    return Character.findOne({
+      where: { id },
+      relations: { episodes: true, planet: true },
+    });
   }
 
   async update(id: string, dto: UpdateCharacterDto) {
-    const character = await this.charactersRepository.findOne({
+    const character = await Character.findOne({
       where: { id },
+      relations: { episodes: true, planet: true },
     });
 
-    return this.charactersRepository.save({ ...character, ...dto });
+    if (dto.name) {
+      character!.name = dto.name;
+    }
+
+    if (dto.planetId) {
+      character!.planet = await Planet.findOne({
+        where: { id: dto.planetId },
+      });
+    }
+
+    if (dto.episodeIds && dto.episodeIds.length) {
+      character!.episodes = (
+        await Promise.all(
+          dto.episodeIds.map((id) => Episode.findOne({ where: { id } })),
+        )
+      ).filter((x) => x !== null);
+    }
+
+    return character!.save();
   }
 
   remove(id: string) {
-    return this.charactersRepository.delete(id);
+    return Character.delete(id);
   }
 }

@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -14,7 +15,7 @@ import { Planet } from '../../planets/entities/planet.entity';
 
 @Entity('characters')
 @Unique(['name'])
-export class Character {
+export class Character extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -32,7 +33,7 @@ export class Character {
   @JoinTable()
   episodes: Episode[];
 
-  @ManyToOne(() => Planet, (planet) => planet.characters, { nullable: true })
+  @ManyToOne(() => Planet, (planet) => planet.characters)
   planet: Planet | null;
 
   @CreateDateColumn()

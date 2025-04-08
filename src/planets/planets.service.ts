@@ -2,37 +2,57 @@ import { Injectable } from '@nestjs/common';
 import { CreatePlanetDto } from './dto/create-planet.dto';
 import { UpdatePlanetDto } from './dto/update-planet.dto';
 import { Planet } from './entities/planet.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Character } from 'src/characters/entities/character.entity';
 
 @Injectable()
 export class PlanetsService {
-  constructor(
-    @InjectRepository(Planet)
-    private planetsRepository: Repository<Planet>,
-  ) {}
+  async create(dto: CreatePlanetDto) {
+    const planet = Planet.create(dto);
 
-  create(dto: CreatePlanetDto) {
-    const planet = this.planetsRepository.create(dto);
+    if (dto.characterIds && dto.characterIds.length) {
+      planet.characters = (
+        await Promise.all(
+          dto.characterIds.map((id) => Character.findOne({ where: { id } })),
+        )
+      ).filter((x) => x !== null);
+    }
 
-    return this.planetsRepository.save(planet);
+    return planet.save();
   }
 
   findAll() {
-    return this.planetsRepository.find();
+    return Planet.find({ relations: { characters: true } });
   }
 
   findOne(id: string) {
-    return this.planetsRepository.findOne({ where: { id } });
+    return Planet.findOne({
+      where: { id },
+      relations: { characters: true },
+    });
   }
 
   async update(id: string, dto: UpdatePlanetDto) {
-    const planet = await this.planetsRepository.findOne({ where: { id } });
+    const planet = await Planet.findOne({
+      where: { id },
+      relations: { characters: true },
+    });
 
-    return this.planetsRepository.save({ ...planet, ...dto });
+    if (dto.name) {
+      planet!.name = dto.name;
+    }
+
+    if (dto.characterIds && dto.characterIds.length) {
+      planet!.characters = (
+        await Promise.all(
+          dto.characterIds.map((id) => Character.findOne({ where: { id } })),
+        )
+      ).filter((x) => x !== null);
+    }
+
+    return planet!.save();
   }
 
   remove(id: string) {
-    return this.planetsRepository.delete(id);
+    return Planet.delete(id);
   }
 }

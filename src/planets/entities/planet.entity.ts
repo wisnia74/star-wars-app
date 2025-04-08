@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -11,7 +12,7 @@ import { Character } from '../../characters/entities/character.entity';
 
 @Entity('planets')
 @Unique(['name'])
-export class Planet {
+export class Planet extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

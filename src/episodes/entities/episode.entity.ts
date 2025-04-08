@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -23,7 +24,7 @@ export enum STAR_WARS_EPISODE {
 
 @Entity('episodes')
 @Unique(['name'])
-export class Episode {
+export class Episode extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
