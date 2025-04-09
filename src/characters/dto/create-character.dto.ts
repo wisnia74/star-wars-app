@@ -1,6 +1,6 @@
 import { CreateEpisodeResponseDto } from '@episodes/dto/create-episode.dto';
 import { ApiProperty, OmitType } from '@nestjs/swagger';
-import { Planet } from '@planets/entities/planet.entity';
+import { CreatePlanetResponseDto } from '@planets/dto/create-planet.dto';
 import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateCharacterRequestDto {
@@ -27,8 +27,11 @@ export class CreateCharacterResponseDto {
   @ApiProperty({ type: String, minLength: 1 })
   name: string;
 
-  @ApiProperty({ type: Planet, required: false })
-  planet?: Planet;
+  @ApiProperty({
+    type: () => [OmitType(CreatePlanetResponseDto, ['characters'])],
+    required: false,
+  })
+  planet?: Omit<CreatePlanetResponseDto, 'characters'>;
 
   @ApiProperty({
     type: () => [OmitType(CreateEpisodeResponseDto, ['characters'])],

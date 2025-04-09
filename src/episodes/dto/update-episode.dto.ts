@@ -7,7 +7,7 @@ export class UpdateEpisodeRequestDto {
   @ApiProperty({ type: String, enum: STAR_WARS_EPISODE, required: false })
   @IsNotEmpty()
   @IsEnum(STAR_WARS_EPISODE)
-  name: STAR_WARS_EPISODE;
+  name?: STAR_WARS_EPISODE;
 
   @ApiProperty({ type: [String], format: 'uuid', required: false })
   @IsOptional()
