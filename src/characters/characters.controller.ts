@@ -50,15 +50,15 @@ export class CharactersController {
   }
 
   @Get(':id')
-  @ApiParam({ name: 'id', type: String, format: 'uuid', required: true })
+  @ApiParam({ name: 'id', type: String, format: 'uuid' })
   @ApiResponse({ type: CreateCharacterResponseDto, status: 200 })
   findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.charactersService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'id', type: String, format: 'uuid' })
   @ApiBody({ type: UpdateCharacterRequestDto, required: false })
-  @ApiParam({ name: 'id', type: String, format: 'uuid', required: true })
   @ApiResponse({ type: UpdateCharacterResponseDto, status: 200 })
   update(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
@@ -69,7 +69,7 @@ export class CharactersController {
 
   @Delete(':id')
   @HttpCode(204)
-  @ApiParam({ name: 'id', type: String, format: 'uuid', required: true })
+  @ApiParam({ name: 'id', type: String, format: 'uuid' })
   @ApiResponse({ status: 204 })
   async remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.charactersService.remove(id);

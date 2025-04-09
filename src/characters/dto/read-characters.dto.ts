@@ -3,9 +3,9 @@ import { Pagination } from 'src/Pagination';
 import { CreateCharacterResponseDto } from './create-character.dto';
 
 export class ReadCharactersResponseDto {
-  @ApiProperty({ type: Pagination, required: true })
+  @ApiProperty({ type: Pagination })
   pagination: Pagination;
 
-  @ApiProperty({ type: [CreateCharacterResponseDto], required: true })
+  @ApiProperty({ type: [CreateCharacterResponseDto] })
   data: CreateCharacterResponseDto[];
 }

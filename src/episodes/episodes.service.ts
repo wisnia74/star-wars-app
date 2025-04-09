@@ -1,13 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateEpisodeDto } from './dto/create-episode.dto';
-import { UpdateEpisodeDto } from './dto/update-episode.dto';
+import { CreateEpisodeRequestDto } from './dto/create-episode.dto';
+import { UpdateEpisodeRequestDto } from './dto/update-episode.dto';
 import { Episode } from './entities/episode.entity';
 import { Character } from '@characters/entities/character.entity';
 import { Pagination } from 'src/Pagination';
 
 @Injectable()
 export class EpisodesService {
-  async create(dto: CreateEpisodeDto) {
+  async create(dto: CreateEpisodeRequestDto) {
     const episode = Episode.create(dto);
 
     if (dto.characterIds && dto.characterIds.length) {
@@ -47,11 +47,15 @@ export class EpisodesService {
     return episode;
   }
 
-  async update(id: string, dto: UpdateEpisodeDto) {
+  async update(id: string, dto?: UpdateEpisodeRequestDto) {
     const episode = await Episode.findOne({
       where: { id },
       relations: { characters: true },
     });
+
+    if (!dto) {
+      return episode;
+    }
 
     if (!episode) {
       throw new NotFoundException(`Episode with ID ${id} was not found`);
