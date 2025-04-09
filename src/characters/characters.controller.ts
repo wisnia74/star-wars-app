@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Query,
 } from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import { CreateCharacterDto } from './dto/create-character.dto';
@@ -24,8 +25,11 @@ export class CharactersController {
   }
 
   @Get()
-  findAll() {
-    return this.charactersService.findAll();
+  findAll(
+    @Query('page') page: number = 1,
+    @Query('perPage') perPage: number = 10,
+  ) {
+    return this.charactersService.findAll(page, perPage);
   }
 
   @Get(':id')

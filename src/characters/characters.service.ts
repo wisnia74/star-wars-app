@@ -4,6 +4,7 @@ import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Character } from './entities/character.entity';
 import { Planet } from '@planets/entities/planet.entity';
 import { Episode } from '@episodes/entities/episode.entity';
+import { Pagination } from 'src/Pagination';
 
 @Injectable()
 export class CharactersService {
@@ -27,8 +28,17 @@ export class CharactersService {
     return character.save();
   }
 
-  findAll() {
-    return Character.find({ relations: { episodes: true, planet: true } });
+  async findAll(page: number = 1, perPage: number = 10) {
+    const characters = await Character.find({
+      relations: { episodes: true, planet: true },
+    });
+
+    const pagination = new Pagination(page, perPage, characters.length);
+
+    return {
+      pagination,
+      data: characters.slice((page - 1) * perPage, page * perPage),
+    };
   }
 
   findOne(id: string) {

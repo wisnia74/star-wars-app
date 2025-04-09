@@ -3,6 +3,7 @@ import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { Episode } from './entities/episode.entity';
 import { Character } from '@characters/entities/character.entity';
+import { Pagination } from 'src/Pagination';
 
 @Injectable()
 export class EpisodesService {
@@ -20,8 +21,15 @@ export class EpisodesService {
     return episode.save();
   }
 
-  findAll() {
-    return Episode.find({ relations: { characters: true } });
+  async findAll(page: number = 1, perPage: number = 10) {
+    const episodes = await Episode.find({ relations: { characters: true } });
+
+    const pagination = new Pagination(page, perPage, episodes.length);
+
+    return {
+      pagination,
+      data: episodes.slice((page - 1) * perPage, page * perPage),
+    };
   }
 
   findOne(id: string) {

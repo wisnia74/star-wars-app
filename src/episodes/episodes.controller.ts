@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Query,
 } from '@nestjs/common';
 import { EpisodesService } from './episodes.service';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
@@ -24,8 +25,11 @@ export class EpisodesController {
   }
 
   @Get()
-  findAll() {
-    return this.episodesService.findAll();
+  findAll(
+    @Query('page') page: number = 1,
+    @Query('perPage') perPage: number = 10,
+  ) {
+    return this.episodesService.findAll(page, perPage);
   }
 
   @Get(':id')

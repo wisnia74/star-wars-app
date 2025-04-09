@@ -3,6 +3,7 @@ import { CreatePlanetDto } from './dto/create-planet.dto';
 import { UpdatePlanetDto } from './dto/update-planet.dto';
 import { Planet } from './entities/planet.entity';
 import { Character } from '@characters/entities/character.entity';
+import { Pagination } from 'src/Pagination';
 
 @Injectable()
 export class PlanetsService {
@@ -20,8 +21,15 @@ export class PlanetsService {
     return planet.save();
   }
 
-  findAll() {
-    return Planet.find({ relations: { characters: true } });
+  async findAll(page: number = 1, perPage: number = 10) {
+    const planets = await Planet.find({ relations: { characters: true } });
+
+    const pagination = new Pagination(page, perPage, planets.length);
+
+    return {
+      pagination,
+      data: planets.slice((page - 1) * perPage, page * perPage),
+    };
   }
 
   findOne(id: string) {

@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Query,
 } from '@nestjs/common';
 import { PlanetsService } from './planets.service';
 import { CreatePlanetDto } from './dto/create-planet.dto';
@@ -24,8 +25,11 @@ export class PlanetsController {
   }
 
   @Get()
-  findAll() {
-    return this.planetsService.findAll();
+  findAll(
+    @Query('page') page: number = 1,
+    @Query('perPage') perPage: number = 10,
+  ) {
+    return this.planetsService.findAll(page, perPage);
   }
 
   @Get(':id')
