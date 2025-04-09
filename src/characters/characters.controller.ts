@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import { CreateCharacterDto } from './dto/create-character.dto';
@@ -26,8 +27,10 @@ export class CharactersController {
 
   @Get()
   findAll(
-    @Query('page') page: number = 1,
-    @Query('perPage') perPage: number = 10,
+    @Query('page', new ParseIntPipe({ optional: true }))
+    page: number = 1,
+    @Query('perPage', new ParseIntPipe({ optional: true }))
+    perPage: number = 10,
   ) {
     return this.charactersService.findAll(page, perPage);
   }
