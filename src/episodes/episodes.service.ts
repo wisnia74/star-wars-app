@@ -74,7 +74,13 @@ export class EpisodesService {
     return episode.save();
   }
 
-  remove(id: string) {
-    return Episode.delete(id);
+  async remove(id: string) {
+    const episode = await Episode.findOne({ where: { id } });
+
+    if (!episode) {
+      throw new NotFoundException(`Episode with ID ${id} was not found`);
+    }
+
+    return episode.remove();
   }
 }
