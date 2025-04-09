@@ -27,7 +27,7 @@ The app tries to leverage built-in (or at least officially recommended from the 
 
 The only tests that I was thinking of adding would be integration tests that would test the interaction between different resources inside the database, during different operations. For that, I would need to spin up the database for tests, either locally (could use `lint-staged` to run tests on commits) or utilizing Github Actions. However, given how small the project is (and that it was supposed to be a simple task to showcase my skills), I didn't include such tests (they would also require some non-trivial effort to setup). It might look bad on the first glance, not having tests (well, I guess a simple healthcheck could suffice, but I'm nearing the deadline with the task) but at the same time, like I mentioned, having tests that test 3rd party packages isn't ideal either.
 
-There's many things I could write here (like, how I solved Swagger circular dependency issue changing `type; <type>` to `type: () => <type>`, or how I was trying to achieve a separation of concerns extracting TypeORM error handling logic to `TypeORMExceptionFilter`) but this text would get quite long then (which it already is), so let me jump to what I would've done if I wanted to deploy this app to production in any form of shape.
+There's many things I could write here (like, how I solved Swagger circular dependency issue changing `type: <type>` to `type: () => <type>`, or how I was trying to achieve a separation of concerns extracting TypeORM error handling logic to `TypeORMExceptionFilter`) but this text would get quite long then (which it already is), so let me jump to what I would've done if I wanted to deploy this app to production in any form of shape.
 
 ## Steps to deploy to prod
 
