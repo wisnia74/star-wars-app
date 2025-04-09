@@ -1,98 +1,32 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# star-wars-app
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Running the project
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Check `.nvmrc` for a correct Node version you need. You can also run `nvm use` or `fnm use`. The project uses `yarn`.
 
-## Description
+1. run `docker compose up`, this will spin up local database on port 5432 and Adminer (UI tool to inspect database) on port 8001
+2. run `yarn db:schema:sync && yarn db:seed` - this will sync the database schema and seed it with example data (check `data-seeder.ts` file to see the data that will be seeded
+3. the app will start on `localhost:8000` - go to `localhost:8000/api` to see Swagger UI
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Thoughts
 
-## Project setup
+I wasn't sure from the description of the task if the fact of not including IDs for the resources was intended or was it just omitted to not give me any ideas for the type of IDs :) I opted for using UUID and actually including it in the resources so you can actually take the IDs from the responses and use them to interact with the API further.
 
-```bash
-$ yarn install
-```
+The app tries to leverage built-in (or at least officially recommended from the docs) features like validation pipeline, TypeORM and Swagger. As such, given how many features are taken from core NestJS packages, it didn't make sense to test too many things like input validation for example, since what I would essentially be doing would be testing the underlying implementation of those packages and you don't want to be testing 3rd party packages.
 
-## Compile and run the project
+The only tests that I was thinking of adding would be integration tests that would test the interaction between different resources inside the database, during different operations. For that, I would need to spin up the database for tests, either locally (could use `lint-staged` to run tests on commits) or utilizing Github Actions. However, given how small the project is (and that it was supposed to be a simple task to showcase my skills), I didn't include such tests (they would also require some non-trivial effort to setup). It might look bad on the first glance, not having tests (well, I guess a simple healthcheck could suffice, but I'm nearing the deadline with the task) but at the same time, like I mentioned, having tests that test 3rd party packages isn't ideal either.
 
-```bash
-# development
-$ yarn run start
+There's many things I could write here (like, how I solved Swagger circular dependency issue changing `type; <type>` to `type: () => <type>`, or how I was trying to achieve a separation of concerns extracting TypeORM error handling logic to `TypeORMExceptionFilter`) but this text would get quite long then (which it already is), so let me jump to what I would've done if I wanted to deploy this app to production in any form of shape.
 
-# watch mode
-$ yarn run start:dev
+## Steps to deploy to prod
 
-# production mode
-$ yarn run start:prod
-```
+1. Well, we need a Docker image which I didn't have time to setup, but this should be quite simple. I would use `alpine` image, copy only needed files and made sure to install only prod dependencies with a `--frozen-lockfile`. One thing to consider is that currently the app loads `.env` file when it starts - there's different approaches here, some companies prefer not to include `.env` in their images, some do not mind. `dotenv` behavior could be tweaked to support either option. If you ask me, if you think there is a problem with including `.env` in the image, I say, if somebody penetrated your infrastructure to the point of getting an image of your app, you likely have way bigger problems than the fact it includes an `.env` file :)
+2. Authentication - could've been achieved on a level of an API gateway of some sorts
+3. Load balancing - in case we want to run multiple instances of the app as a micro-service
+4. If the application would be running as a micro-service, we would need to make sure that instances don't interrupt each other, so we would need some kind of idempotency key in the database and the ability for instances to lock resources
+5. Caching + rate limiting (rate limiting could be achieved on API gateway level)
+6. Logging and monitoring (could be achieved also on API gateway level)
+7. DB migrations - I already have scripts for that
+8. We're using an SQL database, but if this was NoSQL and traffic (or other reasons) would justify it - database sharding
 
-## Run tests
-
-```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+I think that's all that comes to my mind right now, I'm happy to answer any questions too :)
