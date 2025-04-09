@@ -5,8 +5,19 @@
 Check `.nvmrc` for a correct Node version you need. You can also run `nvm use` or `fnm use`. The project uses `yarn`.
 
 1. run `docker compose up`, this will spin up local database on port 5432 and Adminer (UI tool to inspect database) on port 8001
-2. run `yarn db:schema:sync && yarn db:seed` - this will sync the database schema and seed it with example data (check `data-seeder.ts` file to see the data that will be seeded
-3. the app will start on `localhost:8000` - go to `localhost:8000/api` to see Swagger UI
+2. copy `.env.example` to a local `.env` file in the root of the repo
+3. run `yarn db:schema:sync && yarn db:seed` - this will sync the database schema and seed it with example data (check `data-seeder.ts` file to see the data that will be seeded)
+4. run `yarn start:dev` - the app will start on `localhost:8000`, `localhost:8000/api` to see Swagger UI and `localhost:8001` to see Adminer
+
+Important - if you want to use Adminer to peek inside the database, make sure to specify `postgres` as host and not `localhost`.
+The login data should look as follows:
+```
+system: postgresql
+host: postgres
+username: user
+password: password
+database: app
+```
 
 ## Thoughts
 
