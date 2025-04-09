@@ -16,6 +16,8 @@ export class EpisodesService {
           dto.characterIds.map((id) => Character.findOne({ where: { id } })),
         )
       ).filter((x) => x !== null);
+    } else {
+      episode.characters = [];
     }
 
     return episode.save();

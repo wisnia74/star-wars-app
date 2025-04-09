@@ -16,6 +16,8 @@ export class PlanetsService {
           dto.characterIds.map((id) => Character.findOne({ where: { id } })),
         )
       ).filter((x) => x !== null);
+    } else {
+      planet.characters = [];
     }
 
     return planet.save();

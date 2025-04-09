@@ -23,6 +23,8 @@ export class CharactersService {
           dto.episodeIds.map((id) => Episode.findOne({ where: { id } })),
         )
       ).filter((x) => x !== null);
+    } else {
+      character.episodes = [];
     }
 
     return character.save();
