@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCharacterDto } from './dto/create-character.dto';
-import { UpdateCharacterDto } from './dto/update-character.dto';
+import { CreateCharacterRequestDto } from './dto/create-character.dto';
+import { UpdateCharacterRequestDto } from './dto/update-character.dto';
 import { Character } from './entities/character.entity';
 import { Planet } from '@planets/entities/planet.entity';
 import { Episode } from '@episodes/entities/episode.entity';
@@ -8,7 +8,7 @@ import { Pagination } from 'src/Pagination';
 
 @Injectable()
 export class CharactersService {
-  async create(dto: CreateCharacterDto) {
+  async create(dto: CreateCharacterRequestDto) {
     const character = Character.create(dto);
 
     if (dto.planetId) {
@@ -54,11 +54,15 @@ export class CharactersService {
     return character;
   }
 
-  async update(id: string, dto: UpdateCharacterDto) {
+  async update(id: string, dto?: UpdateCharacterRequestDto) {
     const character = await Character.findOne({
       where: { id },
       relations: { episodes: true, planet: true },
     });
+
+    if (!dto) {
+      return character;
+    }
 
     if (!character) {
       throw new NotFoundException(`Character with ID ${id} was not found`);
@@ -94,6 +98,8 @@ export class CharactersService {
       throw new NotFoundException(`Character with ID ${id} was not found`);
     }
 
-    return character.remove();
+    await character.remove();
+
+    return;
   }
 }
