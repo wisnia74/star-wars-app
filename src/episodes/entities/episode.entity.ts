@@ -35,9 +35,13 @@ export class Episode extends BaseEntity {
   @ManyToMany(() => Character, (character) => character.episodes, {
     onDelete: 'CASCADE',
   })
-  @Transform(({ value }: { value: Character[] }) => value.map((x) => x.name), {
-    toPlainOnly: true,
-  })
+  @Transform(
+    ({ value }: { value: Character[] }) =>
+      value.map(({ id, name }) => ({ id, name })),
+    {
+      toPlainOnly: true,
+    },
+  )
   characters: Character[];
 
   @CreateDateColumn()

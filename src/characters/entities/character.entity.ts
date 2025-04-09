@@ -32,16 +32,21 @@ export class Character extends BaseEntity {
     onDelete: 'CASCADE',
   })
   @JoinTable()
-  @Transform(({ value }: { value: Episode[] }) => value.map((x) => x.name), {
-    toPlainOnly: true,
-  })
+  @Transform(
+    ({ value }: { value: Episode[] }) =>
+      value.map(({ id, name }) => ({ id, name })),
+    {
+      toPlainOnly: true,
+    },
+  )
   episodes: Episode[];
 
   @ManyToOne(() => Planet, (planet) => planet.characters, {
     onDelete: 'SET NULL',
   })
   @Transform(
-    ({ value }: { value: Planet | null }) => (value && value.name) ?? undefined,
+    ({ value }: { value: Planet | null }) =>
+      (value && { id: value.id, name: value.name }) ?? undefined,
     { toPlainOnly: true },
   )
   planet: Planet | null;
