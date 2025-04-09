@@ -1,6 +1,7 @@
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateCharacterDto {
+  @IsNotEmpty()
   @IsString()
   name: string;
 

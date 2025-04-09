@@ -67,6 +67,8 @@ export class EpisodesService {
           Character.findOneOrFail({ where: { id } }),
         ),
       );
+    } else if (dto.characterIds) {
+      episode.characters = [];
     }
 
     return episode.save();

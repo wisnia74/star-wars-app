@@ -72,12 +72,16 @@ export class CharactersService {
       character.planet = await Planet.findOneOrFail({
         where: { id: dto.planetId },
       });
+    } else if (dto.planetId === null) {
+      character.planet = null;
     }
 
     if (dto.episodeIds && dto.episodeIds.length) {
       character.episodes = await Promise.all(
         dto.episodeIds.map((id) => Episode.findOneOrFail({ where: { id } })),
       );
+    } else if (dto.episodeIds) {
+      character.episodes = [];
     }
 
     return character.save();

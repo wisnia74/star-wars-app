@@ -67,6 +67,8 @@ export class PlanetsService {
           Character.findOneOrFail({ where: { id } }),
         ),
       );
+    } else if (dto.characterIds) {
+      planet.characters = [];
     }
 
     return planet.save();
