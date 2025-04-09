@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Character } from './entities/character.entity';
@@ -12,17 +12,15 @@ export class CharactersService {
     const character = Character.create(dto);
 
     if (dto.planetId) {
-      character.planet = await Planet.findOne({
+      character.planet = await Planet.findOneOrFail({
         where: { id: dto.planetId },
       });
     }
 
     if (dto.episodeIds && dto.episodeIds.length) {
-      character.episodes = (
-        await Promise.all(
-          dto.episodeIds.map((id) => Episode.findOne({ where: { id } })),
-        )
-      ).filter((x) => x !== null);
+      character.episodes = await Promise.all(
+        dto.episodeIds.map((id) => Episode.findOneOrFail({ where: { id } })),
+      );
     } else {
       character.episodes = [];
     }
@@ -43,11 +41,17 @@ export class CharactersService {
     };
   }
 
-  findOne(id: string) {
-    return Character.findOne({
+  async findOne(id: string) {
+    const character = await Character.findOne({
       where: { id },
       relations: { episodes: true, planet: true },
     });
+
+    if (!character) {
+      throw new NotFoundException(`Character with ID ${id} was not found`);
+    }
+
+    return character;
   }
 
   async update(id: string, dto: UpdateCharacterDto) {
@@ -56,25 +60,27 @@ export class CharactersService {
       relations: { episodes: true, planet: true },
     });
 
+    if (!character) {
+      throw new NotFoundException(`Character with ID ${id} was not found`);
+    }
+
     if (dto.name) {
-      character!.name = dto.name;
+      character.name = dto.name;
     }
 
     if (dto.planetId) {
-      character!.planet = await Planet.findOne({
+      character.planet = await Planet.findOneOrFail({
         where: { id: dto.planetId },
       });
     }
 
     if (dto.episodeIds && dto.episodeIds.length) {
-      character!.episodes = (
-        await Promise.all(
-          dto.episodeIds.map((id) => Episode.findOne({ where: { id } })),
-        )
-      ).filter((x) => x !== null);
+      character.episodes = await Promise.all(
+        dto.episodeIds.map((id) => Episode.findOneOrFail({ where: { id } })),
+      );
     }
 
-    return character!.save();
+    return character.save();
   }
 
   remove(id: string) {

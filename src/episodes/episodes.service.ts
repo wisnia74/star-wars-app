@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { Episode } from './entities/episode.entity';
@@ -11,11 +11,11 @@ export class EpisodesService {
     const episode = Episode.create(dto);
 
     if (dto.characterIds && dto.characterIds.length) {
-      episode.characters = (
-        await Promise.all(
-          dto.characterIds.map((id) => Character.findOne({ where: { id } })),
-        )
-      ).filter((x) => x !== null);
+      episode.characters = await Promise.all(
+        dto.characterIds.map((id) =>
+          Character.findOneOrFail({ where: { id } }),
+        ),
+      );
     } else {
       episode.characters = [];
     }
@@ -34,8 +34,17 @@ export class EpisodesService {
     };
   }
 
-  findOne(id: string) {
-    return Episode.findOne({ where: { id }, relations: { characters: true } });
+  async findOne(id: string) {
+    const episode = await Episode.findOne({
+      where: { id },
+      relations: { characters: true },
+    });
+
+    if (!episode) {
+      throw new NotFoundException(`Episode with ID ${id} was not found`);
+    }
+
+    return episode;
   }
 
   async update(id: string, dto: UpdateEpisodeDto) {
@@ -44,19 +53,23 @@ export class EpisodesService {
       relations: { characters: true },
     });
 
+    if (!episode) {
+      throw new NotFoundException(`Episode with ID ${id} was not found`);
+    }
+
     if (dto.name) {
-      episode!.name = dto.name;
+      episode.name = dto.name;
     }
 
     if (dto.characterIds && dto.characterIds.length) {
-      episode!.characters = (
-        await Promise.all(
-          dto.characterIds.map((id) => Character.findOne({ where: { id } })),
-        )
-      ).filter((x) => x !== null);
+      episode.characters = await Promise.all(
+        dto.characterIds.map((id) =>
+          Character.findOneOrFail({ where: { id } }),
+        ),
+      );
     }
 
-    return episode!.save();
+    return episode.save();
   }
 
   remove(id: string) {

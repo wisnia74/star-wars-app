@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePlanetDto } from './dto/create-planet.dto';
 import { UpdatePlanetDto } from './dto/update-planet.dto';
 import { Planet } from './entities/planet.entity';
@@ -11,11 +11,11 @@ export class PlanetsService {
     const planet = Planet.create(dto);
 
     if (dto.characterIds && dto.characterIds.length) {
-      planet.characters = (
-        await Promise.all(
-          dto.characterIds.map((id) => Character.findOne({ where: { id } })),
-        )
-      ).filter((x) => x !== null);
+      planet.characters = await Promise.all(
+        dto.characterIds.map((id) =>
+          Character.findOneOrFail({ where: { id } }),
+        ),
+      );
     } else {
       planet.characters = [];
     }
@@ -34,11 +34,17 @@ export class PlanetsService {
     };
   }
 
-  findOne(id: string) {
-    return Planet.findOne({
+  async findOne(id: string) {
+    const planet = await Planet.findOne({
       where: { id },
       relations: { characters: true },
     });
+
+    if (!planet) {
+      throw new NotFoundException(`Planet with ID ${id} was not found`);
+    }
+
+    return planet;
   }
 
   async update(id: string, dto: UpdatePlanetDto) {
@@ -47,19 +53,23 @@ export class PlanetsService {
       relations: { characters: true },
     });
 
+    if (!planet) {
+      throw new NotFoundException(`Planet with ID ${id} was not found`);
+    }
+
     if (dto.name) {
-      planet!.name = dto.name;
+      planet.name = dto.name;
     }
 
     if (dto.characterIds && dto.characterIds.length) {
-      planet!.characters = (
-        await Promise.all(
-          dto.characterIds.map((id) => Character.findOne({ where: { id } })),
-        )
-      ).filter((x) => x !== null);
+      planet.characters = await Promise.all(
+        dto.characterIds.map((id) =>
+          Character.findOneOrFail({ where: { id } }),
+        ),
+      );
     }
 
-    return planet!.save();
+    return planet.save();
   }
 
   remove(id: string) {
