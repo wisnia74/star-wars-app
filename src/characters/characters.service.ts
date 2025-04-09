@@ -92,14 +92,10 @@ export class CharactersService {
   }
 
   async remove(id: string) {
-    const character = await Character.findOne({ where: { id } });
-
-    if (!character) {
+    if (!(await Character.exists({ where: { id } }))) {
       throw new NotFoundException(`Character with ID ${id} was not found`);
     }
 
-    await character.remove();
-
-    return;
+    await Character.delete(id);
   }
 }

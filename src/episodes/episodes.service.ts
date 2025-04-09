@@ -79,12 +79,10 @@ export class EpisodesService {
   }
 
   async remove(id: string) {
-    const episode = await Episode.findOne({ where: { id } });
-
-    if (!episode) {
+    if (!(await Episode.exists({ where: { id } }))) {
       throw new NotFoundException(`Episode with ID ${id} was not found`);
     }
 
-    return episode.remove();
+    return Episode.delete(id);
   }
 }

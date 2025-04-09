@@ -79,12 +79,10 @@ export class PlanetsService {
   }
 
   async remove(id: string) {
-    const planet = await Planet.findOne({ where: { id } });
-
-    if (!planet) {
+    if (!(await Planet.exists({ where: { id } }))) {
       throw new NotFoundException(`Planet with ID ${id} was not found`);
     }
 
-    return planet.remove();
+    await Planet.delete(id);
   }
 }
